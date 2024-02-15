@@ -1,0 +1,23 @@
+{
+  "name": "bad-and-certified-pick-ups-openapi",
+  "version": "1.0.0",
+  "description": "This is an open API for `BAD` operations management. You can use the api key `api_key` to test the authorization filters. <h2>Authentication</h2> All API's must be authenticated. To authenticate, supply your API key as the `Authorization` HTTP header with the `api_key` authorization scheme. <h2>Parameters</h2> For API's that use POST, set the request's Content-Type header to `application/json` and supply an appropriate JSON object in the request body. For API's that use GET, specify each request parameter as a properly-escaped query parameter. <h2>Response</h2> All responses have their Content-Type set to `application/json`, and contain the response JSON object in the response body.",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Unlicense",
+  "private": true,
+  "dependencies": {
+    "connect": "^3.2.0",
+    "dotenv": "^16.4.4",
+    "express": "^4.18.2",
+    "js-yaml": "^3.3.0",
+    "pg": "^8.11.3",
+    "swagger-tools": "0.10.1"
+  }
+}

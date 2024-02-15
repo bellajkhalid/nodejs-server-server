@@ -1,0 +1,2591 @@
+---
+swagger: "2.0"
+info:
+  description: "This is an open API for `BAD` operations management. You can use the\
+    \ api key `api_key` to test the authorization filters. <h2>Authentication</h2>\
+    \ All API's must be authenticated. To authenticate, supply your API key as the\
+    \ `Authorization` HTTP header with the `api_key` authorization scheme. <h2>Parameters</h2>\
+    \ For API's that use POST, set the request's Content-Type header to `application/json`\
+    \ and supply an appropriate JSON object in the request body. For API's that use\
+    \ GET, specify each request parameter as a properly-escaped query parameter. <h2>Response</h2>\
+    \ All responses have their Content-Type set to `application/json`, and contain\
+    \ the response JSON object in the response body."
+  version: "1.0.0"
+  title: "BAD and Certified pick-ups OpenAPI"
+host: "localhost:8081"
+basePath: "/v2"
+tags:
+- name: "A_Sum"
+  description: "Endpoints for managing data Sum"
+- name: "Bad"
+  description: "Endpoints for managing bad objects"
+- name: "Cpu"
+  description: "Endpoints for managing CPU objects"
+- name: "Amp"
+  description: "Endpoints for managing AMP objects"
+- name: "TractionExt"
+  description: "Endpoints for managing Traction objects"
+- name: "Permissions"
+  description: "Endpoints for managing users permissions"
+- name: "Payments"
+  description: "Endpoints for managing payments"
+schemes:
+- "http"
+consumes:
+- "application/json"
+paths:
+  /Sum_PgAdmin:
+    post:
+      tags:
+      - "A_Sum"
+      summary: "Data in pgAdmin with sum of var a and var b."
+      description: " Please provide the two variables you would like me to add in the body below:\n"     
+      operationId: "createPGPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Sum object"
+        required: true
+        schema:
+          $ref: "#/definitions/Sumdata"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Sum"
+  /createBad:
+    post:
+      tags:
+      - "Bad"
+      summary: "Create a new bad in the blockchain."
+      description: "Issues a new bad to the world state with the given details.\n"
+      operationId: "createBadPOST"
+      parameters:
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "BAD object"
+        required: true
+        schema:
+          $ref: "#/definitions/BadWithSignature"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /readBad:
+    get:
+      tags:
+      - "Bad"
+      summary: "Read a bad stored in the blockchain with the given badId."
+      description: "Retrieves the bad stored in the blockchain with the given badId.\n"
+      operationId: "readBadGET"
+      parameters:
+      - name: "badId"
+        in: "query"
+        description: "ID of the bad"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/bad"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /deleteBad:
+    delete:
+      tags:
+      - "Bad"
+      summary: "Delete a given bad from the world state."
+      description: "Deletes the bad with the given badId from the world state on the\
+        \ blockchain.\n"
+      operationId: "deleteBadDELETE"
+      parameters:
+      - name: "badId"
+        in: "query"
+        description: "ID of the bad"
+        required: true
+        type: "string"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /badExists:
+    get:
+      tags:
+      - "Bad"
+      summary: "Check if bad with given ID exists in world state."
+      description: "Checks if the bad with the given badId exists in the blockchain.\n"
+      operationId: "badExistsGET"
+      parameters:
+      - name: "badId"
+        in: "query"
+        description: "ID of the bad"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /changeOwner:
+    put:
+      tags:
+      - "Bad"
+      summary: "Update the owner AND CONSIGNEE field of a bad with given badId in\
+        \ the blockchain."
+      description: "Updates both the owner and consignee fields of a bad with the\
+        \ given badId in the blockchain.\n"
+      operationId: "changeOwnerPUT"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "BAD object"
+        required: true
+        schema:
+          $ref: "#/definitions/BadChangeOwnerRequestWithSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /changeStatus:
+    put:
+      tags:
+      - "Bad"
+      summary: "Update the Status of a bad with given badId in the blockchain."
+      description: "Update the Status of a bad with given badId in the blockchain.\n"
+      operationId: "changeStatusPUT"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "BAD object"
+        required: true
+        schema:
+          $ref: "#/definitions/BadChangeStatusRequestWithSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /changeStatusWithData:
+    put:
+      tags:
+      - "Bad"
+      summary: "Update the bad status and other details given a badId in the blockchain."
+      description: "Update the bad status and other details given a badId in the blockchain.\n"
+      operationId: "changeStatusWithDataPUT"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "BAD object"
+        required: true
+        schema:
+          $ref: "#/definitions/BadChangeOwnerAndStatusRequestWithoutSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /changeHolder:
+    put:
+      tags:
+      - "Bad"
+      summary: "Update the holder field of a bad with given badId in the blockchain."
+      description: "Updates the holder field of a bad with the given badId in the\
+        \ blockchain.\n"
+      operationId: "changeHolderPUT"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "BAD object"
+        required: true
+        schema:
+          $ref: "#/definitions/BadChangeHolderRequestWithSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /endorseTransfer:
+    put:
+      tags:
+      - "Bad"
+      summary: "Update the holder AND owner field of a bad in the blockchain."
+      description: "Updates both the holder and owner fields of a bad in the blockchain.\n"
+      operationId: "endorseTransferPUT"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "BAD object"
+        required: true
+        schema:
+          $ref: "#/definitions/EndorseTransferRequestWithSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /resbmitBad:
+    put:
+      tags:
+      - "Bad"
+      summary: "Update bad after customs response."
+      description: "Updates bad fields in the blockchain.\n"
+      operationId: "resubmitBadPUT"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "BAD object"
+        required: true
+        schema:
+          $ref: "#/definitions/ResubmitRequestWithSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /getAllBads:
+    get:
+      tags:
+      - "Bad"
+      summary: "Return all bads found in the blockchain."
+      description: "Retrieves a list of all bads found in blockchain. The results\
+        \ are pagginated with pagesize.\n"
+      operationId: "getAllBadsGET"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Pegination details"
+        required: true
+        schema:
+          $ref: "#/definitions/getallRequest"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /getFiltredBads:
+    get:
+      tags:
+      - "Bad"
+      summary: "Return all bads found in the blockchain based on defined filters."
+      description: "Retrieves a list of all bads found in blockchain. \n"
+      operationId: "getfiltredBadsGET"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Pegination details"
+        required: true
+        schema:
+          $ref: "#/definitions/getfiltredBadsRequest"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /getBadByOwner/:
+    get:
+      tags:
+      - "Bad"
+      summary: "Return all bads found in the blockchain."
+      description: "Retrieves a list of all bads owned by a given user.\n"
+      operationId: "getBadsByOwnerGET"
+      parameters:
+      - name: "ownerName"
+        in: "query"
+        description: "Pegination details"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/dateInterval"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/bad"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /getBadByTerminal/:
+    get:
+      tags:
+      - "Bad"
+      summary: "Return all bads found in the blockchain by Terminal."
+      description: "Retrieves a list of all bads owned by a given terminal.\n"
+      operationId: "getBadByTerminalGET"
+      parameters:
+      - name: "terminal"
+        in: "query"
+        description: "Pegination details"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/dateInterval"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/bad"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /breakBad:
+    post:
+      tags:
+      - "Bad"
+      summary: "Transform a bad into multiple CPUs based on NumCpu."
+      description: "Transforms a bad into multiple CPUs based on the value of NumCpu\
+        \ field in the bad object.\n"
+      operationId: "breakBadPOST"
+      parameters:
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "BAD object"
+        required: true
+        schema:
+          $ref: "#/definitions/BreakBadRequestWithSignature"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /createCPU:
+    post:
+      tags:
+      - "Cpu"
+      summary: "Create a new CPU for a given BAD."
+      description: "Creates a new CPU for a given BAD in the creation phase. The minter\
+        \ indicates the first owner (transporter).\n"
+      operationId: "createCPUPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "CPU object"
+        required: true
+        schema:
+          $ref: "#/definitions/CpuWithSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+      x-swagger-router-controller: "Cpu"
+  /readCPU:
+    get:
+      tags:
+      - "Cpu"
+      summary: "Read a CPU for a given CPUId."
+      description: "Reads a CPU for a given CPUId.\n"
+      operationId: "readCPUGET"
+      parameters:
+      - name: "nonce"
+        in: "query"
+        description: "nonce of the CPU"
+        required: true
+        type: "string"
+      - name: "badId"
+        in: "query"
+        description: "ID of the bad"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Cpu"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "404":
+          description: "CPU not found"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+      x-swagger-router-controller: "Cpu"
+  /readCPUByTokenValue:
+    get:
+      tags:
+      - "Cpu"
+      summary: "Read a CPU using its token value."
+      description: "Reads a CPU for a given CPUId.\n"
+      operationId: "readCPUByTokenValueGET"
+      parameters:
+      - name: "tokenValue"
+        in: "query"
+        description: "the random token vlaue in the CPU"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Cpu"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "404":
+          description: "CPU not found"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+      x-swagger-router-controller: "Cpu"
+  /reAssignCpu:
+    put:
+      tags:
+      - "Cpu"
+      summary: "Assign a CPU to a new owner."
+      description: "Assigns a CPU to a new owner in the blockchain.\n"
+      operationId: "reAssignCPUPUT"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "CPU object"
+        required: true
+        schema:
+          $ref: "#/definitions/assignCpuRequestWithSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "404":
+          description: "CPU not found"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+      x-swagger-router-controller: "Cpu"
+  /supplementCpu:
+    put:
+      tags:
+      - "Cpu"
+      summary: "Supplement a CPU to a driver and transfer ownership to the driver."
+      description: "Supplements a CPU to a driver and transfers ownership to the driver\
+        \ in the blockchain with the provided details. This function is called by\
+        \ the owner of the CPU (transporter).\n"
+      operationId: "supplementCPUPUT"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "CPU object"
+        required: true
+        schema:
+          $ref: "#/definitions/supplementCpuWithSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "404":
+          description: "CPU not found"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+      x-swagger-router-controller: "Cpu"
+  /burnCpu:
+    delete:
+      tags:
+      - "Cpu"
+      summary: "Burn a specific CPU."
+      description: "Burns a specific CPU from the world state on the blockchain.\n"
+      operationId: "burnCPUDELETE"
+      parameters:
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Request body with multiple variables"
+        required: false
+        schema:
+          $ref: "#/definitions/body"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "404":
+          description: "CPU not found"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/CpuResponse"
+      x-swagger-router-controller: "Cpu"
+  /makePayment:
+    post:
+      tags:
+      - "Payments"
+      summary: "Pay the due amount for a given bad."
+      description: "Pays the due amount for the given bad in the blockchain.\n"
+      operationId: "makePaymentPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "payment object"
+        required: true
+        schema:
+          $ref: "#/definitions/PaymentOperationRequestWithSignature"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /updatePayment:
+    post:
+      tags:
+      - "Payments"
+      summary: "Check and update the status of a payment previously done for a given\
+        \ bad"
+      description: "Check and update the status of a payment previously done for a\
+        \ given bad\n"
+      operationId: "updatePaymenByPayNumberPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "payment object"
+        required: true
+        schema:
+          $ref: "#/definitions/statusPaymentOperationRequest"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /updatePaymentBadId:
+    post:
+      tags:
+      - "Payments"
+      summary: "Check and update the status of a payment previously done for a given\
+        \ bad."
+      description: "Check and update the status of a payment previously done for a\
+        \ given bad\n"
+      operationId: "updatePaymentByBadIdPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "payment object"
+        required: true
+        schema:
+          $ref: "#/definitions/statusPaymentOperationRequestByBadId"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /getPaymentOperationByNumber:
+    get:
+      tags:
+      - "Payments"
+      summary: "Get a payment operation by its number"
+      description: "Returns the payment operation with the specified number."
+      operationId: "getPaymentOperationByNumber"
+      parameters:
+      - name: "paymentNumber"
+        in: "query"
+        description: "The number of the payment operation to retrieve"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/PaymentOperation"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Payment operation not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Payments"
+    x-swagger-router-controller: "Bad"
+  /isHolder:
+    get:
+      tags:
+      - "Bad"
+      summary: "Check if the user is the holder of the specified bad in the blockchain."
+      description: "Checks if the user is the holder of the specified bad in the blockchain.\n"
+      operationId: "isHolderGET"
+      parameters:
+      - name: "badId"
+        in: "query"
+        description: "ID of the bad"
+        required: true
+        type: "string"
+      - name: "holder"
+        in: "query"
+        description: "Holder of the bad"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /isOwner:
+    get:
+      tags:
+      - "Bad"
+      summary: "Check if the user is the owner of the specified bad in the blockchain."
+      description: "Checks if the user is the owner of the specified bad in the blockchain.\n"
+      operationId: "isOwnerGET"
+      parameters:
+      - name: "badId"
+        in: "query"
+        description: "ID of the bad"
+        required: true
+        type: "string"
+      - name: "owner"
+        in: "query"
+        description: "Owner of the bad"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "Success response"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Message"
+        "404":
+          description: "Bad not found"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Message"
+      x-swagger-router-controller: "Bad"
+  /amp/create:
+    post:
+      tags:
+      - "Amp"
+      summary: "Create a new Amp"
+      description: "Create a new Amp"
+      operationId: "createAmp"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "amp object"
+        required: true
+        schema:
+          $ref: "#/definitions/ampCreatePayload"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Invalid amp supplied"
+        "401":
+          description: "Authentication information is missing or invalid"
+        "404":
+          description: "amp not found"
+      x-swagger-router-controller: "Amp"
+  /amp/update/{noAmp}:
+    put:
+      tags:
+      - "Amp"
+      summary: "Update an existing amp. Indicate values of attributes to update leave\
+        \ the others empty"
+      description: "Update basic details of an existing amp. A new token will be generated\
+        \ if the details are modified."
+      operationId: "updateAmp"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "noAmp"
+        in: "path"
+        description: "Amp number"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "updated amp object"
+        required: true
+        schema:
+          $ref: "#/definitions/ampUpdatePayload"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Invalid ID supplied"
+        "401":
+          description: "Authentication information is missing or invalid"
+        "404":
+          description: "amp not found"
+      x-swagger-router-controller: "Amp"
+  /amp/close/{noAmp}:
+    put:
+      tags:
+      - "Amp"
+      summary: "Close an Amp"
+      description: "close an Amp"
+      operationId: "closeAmp"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "noAmp"
+        in: "path"
+        description: "Id of the Amp to close"
+        required: true
+        type: "string"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Invalid ID supplied"
+        "401":
+          description: "Authentication information is missing or invalid"
+        "404":
+          description: "amp not found"
+      x-swagger-router-controller: "Amp"
+  /tractionExt/create:
+    post:
+      tags:
+      - "TractionExt"
+      summary: "Create a new certified traction operation"
+      description: "Create a new certified traction operation"
+      operationId: "createTractionExt"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "tractionExt object"
+        required: true
+        schema:
+          $ref: "#/definitions/creationTractionExt"
+      - name: "initiator"
+        in: "query"
+        description: "Inintiator of the transaction"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Invalid tractionExt supplied"
+        "401":
+          description: "Authentication information is missing or invalid"
+        "404":
+          description: "tractionExt not found"
+      x-swagger-router-controller: "TractionExt"
+  /tractionExt/{TractionExtNum}:
+    get:
+      tags:
+      - "TractionExt"
+      summary: "Find tractionExt by Id"
+      description: "Returns a single tractionExt identified by its TractionExtNum"
+      operationId: "getTractionExtById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "TractionExtNum"
+        in: "path"
+        description: "ID of tractionExt to return"
+        required: true
+        type: "string"
+      security:
+      - api_key: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/tractionExt"
+        "400":
+          description: "Invalid ID supplied"
+        "401":
+          description: "Authentication information is missing or invalid"
+        "404":
+          description: "tractionExt not found"
+      x-swagger-router-controller: "TractionExt"
+  /addPermissions:
+    post:
+      tags:
+      - "Permissions"
+      summary: "Add multiple or single permissions to a user for an organization"
+      operationId: "addPermissionsPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/PermissionsRequest"
+      responses:
+        "200":
+          description: "Permissions added successfully"
+      x-swagger-router-controller: "Permission"
+  /updatePermissions:
+    put:
+      tags:
+      - "Permissions"
+      summary: "Update the whole permission array for a user for an organization"
+      operationId: "updatePermissionsPUT"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/PermissionsRequest"
+      responses:
+        "200":
+          description: "Permissions updated successfully"
+      x-swagger-router-controller: "Permission"
+  /removePermissions:
+    delete:
+      tags:
+      - "Permissions"
+      summary: "Remove multiple or single permissions from a user for an organization"
+      operationId: "removePermissionsDELETE"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/PermissionsRequest"
+      responses:
+        "200":
+          description: "Permissions removed successfully"
+      x-swagger-router-controller: "Permission"
+  /getPermissions:
+    get:
+      tags:
+      - "Permissions"
+      summary: "Get list of permission for a user for an organization"
+      operationId: "getPermissionsGET"
+      parameters:
+      - name: "userName"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "orgName"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Permissions retrieved successfully"
+      x-swagger-router-controller: "Permission"
+  /hasPermission:
+    get:
+      tags:
+      - "Permissions"
+      summary: "Check if a user has a specific permission"
+      operationId: "hasPermissionGET"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/PermissionsRequest"
+      responses:
+        "200":
+          description: "Permission check result"
+      x-swagger-router-controller: "Permission"
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  PermissionsRequest:
+    type: "object"
+    properties:
+      userName:
+        type: "string"
+      orgName:
+        type: "string"
+      permissions:
+        type: "array"
+        items:
+          type: "string"
+    example:
+      orgName: "orgName"
+      permissions:
+      - "permissions"
+      - "permissions"
+      userName: "userName"
+  HasPermissionsRequest:
+    type: "object"
+    properties:
+      userName:
+        type: "string"
+      orgName:
+        type: "string"
+      permission:
+        type: "string"
+        description: "the permission to check"
+  getallRequest:
+    type: "object"
+    properties:
+      pageSize:
+        type: "integer"
+      bookmark:
+        type: "string"
+  getfiltredBadsRequest:
+    type: "object"
+    properties:
+      dateCreationDebut:
+        type: "string"
+      dateCreationFin:
+        type: "string"
+      numeroEscale:
+        type: "string"
+      numeroConnaissement:
+        type: "integer"
+      statusDouane:
+        type: "string"
+      numeroDeclarationSommaire:
+        type: "string"
+      numeroBAD:
+        type: "string"
+  dateInterval:
+    type: "object"
+    properties:
+      startDate:
+        type: "integer"
+        description: "starting unix timestamp"
+      endDate:
+        type: "integer"
+        example: 12324324
+        description: "ending unix timestamp"
+  BadChangeOwnerRequest:
+    type: "object"
+    required:
+    - "badId"
+    - "newOwner"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+      newOwner:
+        type: "string"
+        description: "New owner of the bad"
+    example:
+      badId: "badId"
+      newOwner: "newOwner"
+  BadChangeOwnerAndStatusRequestWithoutSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/BadChangeOwnerAndStatusRequest"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      bad:
+        badId: "badId"
+        newHolder: "newHolder"
+        newOwner: "newOwner"
+        status: "status"
+  BadChangeOwnerAndStatusRequest:
+    type: "object"
+    required:
+    - "badId"
+    - "status"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+      newOwner:
+        type: "string"
+        description: "New owner of the bad"
+      newHolder:
+        type: "string"
+        description: "New holder of the bad"
+      status:
+        type: "string"
+        description: "New owner of the bad"
+    example:
+      badId: "badId"
+      newHolder: "newHolder"
+      newOwner: "newOwner"
+      status: "status"
+  BadChangeOwnerRequestWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/BadChangeOwnerRequest"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      bad:
+        badId: "badId"
+        newOwner: "newOwner"
+  UpdateStatusRequest:
+    type: "object"
+    required:
+    - "badId"
+    - "status"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+      status:
+        type: "string"
+        description: "New status of the bad"
+    example:
+      badId: "badId"
+      status: "status"
+  BreakBadRequest:
+    type: "object"
+    required:
+    - "badId"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+    example:
+      badId: "badId"
+  BreakBadRequestWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/BreakBadRequest"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      bad:
+        badId: "badId"
+  BadChangeStatusRequestWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/UpdateStatusRequest"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      bad:
+        badId: "badId"
+        status: "status"
+  EndorseTransferRequest:
+    type: "object"
+    required:
+    - "badId"
+    - "consignee"
+    - "issuer"
+    - "status"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+      issuer:
+        type: "string"
+        example: "FRS"
+        description: "Issuer of the bad"
+      status:
+        type: "string"
+        description: "New status of the bad"
+        enum:
+        - "SUBMIT"
+        - "VALID"
+        - "REJECTED"
+      consignee:
+        type: "string"
+        description: "New consignee of the bad"
+      notify:
+        type: "string"
+        example: "alami"
+        description: "New notify of the bad"
+      montantBC:
+        type: "integer"
+        example: 24545
+        description: "Amount in centimes. Expecting an integer not a a float"
+      lieuStockage:
+        type: "string"
+        example: "Term2"
+        description: "Attribute of badDetails"
+      paiementConditional:
+        type: "boolean"
+        description: "is bad conditioned by payment"
+      dateExpiration:
+        type: "integer"
+        description: "timestamp expressing expiration date"
+    example:
+      badId: "badId"
+      consignee: "consignee"
+      lieuStockage: "Term2"
+      paiementConditional: true
+      dateExpiration: 0
+      issuer: "FRS"
+      notify: "alami"
+      status: "SUBMIT"
+      montantBC: 24545
+  ResubmitRequest:
+    type: "object"
+    required:
+    - "badId"
+    - "consignee"
+    - "issuer"
+    - "status"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+      issuer:
+        type: "string"
+        example: "FRS"
+        description: "Issuer of the bad"
+      status:
+        type: "string"
+        description: "New status of the bad"
+        enum:
+        - "SUBMIT"
+        - "VALID"
+        - "REJECTED"
+      consignee:
+        type: "string"
+        description: "New consignee of the bad"
+      notify:
+        type: "string"
+        example: "alami"
+        description: "New notify of the bad"
+      montantBC:
+        type: "integer"
+        example: 24545
+        description: "Amount in centimes. Expecting an integer not a a float"
+      lieuStockage:
+        type: "string"
+        example: "Term2"
+        description: "Attribute of badDetails"
+      paiementConditional:
+        type: "boolean"
+        description: "is bad conditioned by payment"
+      dateExpiration:
+        type: "integer"
+        description: "timestamp expressing expiration date"
+    example:
+      badId: "badId"
+      consignee: "consignee"
+      lieuStockage: "Term2"
+      paiementConditional: true
+      dateExpiration: 0
+      issuer: "FRS"
+      notify: "alami"
+      status: "SUBMIT"
+      montantBC: 24545
+  EndorseTransferRequestWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/EndorseTransferRequest"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      bad:
+        badId: "badId"
+        consignee: "consignee"
+        lieuStockage: "Term2"
+        paiementConditional: true
+        dateExpiration: 0
+        issuer: "FRS"
+        notify: "alami"
+        status: "SUBMIT"
+        montantBC: 24545
+  ResubmitRequestWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/ResubmitRequest"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      bad:
+        badId: "badId"
+        consignee: "consignee"
+        lieuStockage: "Term2"
+        paiementConditional: true
+        dateExpiration: 0
+        issuer: "FRS"
+        notify: "alami"
+        status: "SUBMIT"
+        montantBC: 24545
+  assignCpuRequest:
+    type: "object"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+      nonce:
+        type: "integer"
+        description: "ID of the CPU"
+      owner:
+        type: "string"
+        description: "ID of the owner"
+      newOwner:
+        type: "string"
+        description: "ID of the new owner"
+  assignCpuRequestWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/assignCpuRequest"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+  supplementCpu:
+    type: "object"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+      driverId:
+        type: "string"
+        description: "ID of the driver"
+      nonce:
+        type: "integer"
+        description: "Number of the CPU"
+  supplementCpuWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/supplementCpu"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+  BadChangeHolderRequest:
+    type: "object"
+    required:
+    - "badId"
+    - "newHolder"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+      newHolder:
+        type: "string"
+        description: "New Holder of the bad"
+    example:
+      badId: "badId"
+      newHolder: "newHolder"
+  BadChangeHolderRequestWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/BadChangeHolderRequest"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      bad:
+        badId: "badId"
+        newHolder: "newHolder"
+  bad:
+    type: "object"
+    required:
+    - "badDetails"
+    - "badId"
+    - "consignee"
+    - "issuer"
+    - "owner"
+    properties:
+      badId:
+        type: "string"
+      issuer:
+        type: "string"
+      consignee:
+        type: "string"
+      owner:
+        type: "string"
+      montantBC:
+        type: "integer"
+        description: "Amount in centimes. Expecting an integer not a a float"
+      holder:
+        type: "string"
+      notify:
+        type: "string"
+      creationDate:
+        type: "integer"
+        description: "TimeStamp"
+      paiementConditional:
+        type: "boolean"
+      dateExpiration:
+        type: "integer"
+      isPaid:
+        type: "boolean"
+      numCpu:
+        type: "integer"
+        description: "how many cpus the bad should generate once broken"
+      status:
+        type: "string"
+        enum:
+        - "SUBMIT"
+        - "VALID"
+        - "REJECTED"
+      badDetails:
+        $ref: "#/definitions/BadDetails"
+    example:
+      owner: "owner"
+      consignee: "consignee"
+      holder: "holder"
+      creationDate: 6
+      issuer: "issuer"
+      notify: "notify"
+      montantBC: 0
+      badDetails:
+        dateCreation: "2023-10-13 15:39:06"
+        notifyBad: "notifyBad"
+        tar: 2000
+        dateReceptionEai: "dateReceptionEai"
+        poids: 2000
+        voyage: "{}"
+        referenceDeclarationSommaire: "ref_230000107"
+        referenceBAD: "411230000000077"
+        submitted: true
+        idNotify: "195450"
+        lieuStockage: "411001"
+        connaissement: "{}"
+        port: "MAPTM"
+        freightForwarder: true
+        dateReceptionDouane: "dateReceptionDouane"
+      isPaid: true
+      badId: "badId"
+      paiementConditional: true
+      dateExpiration: 1
+      numCpu: 5
+      status: "SUBMIT"
+  signaturePayload:
+    type: "string"
+    description: "Signature of the body payload in base64"
+    example: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+  BadWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/bad"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      bad:
+        owner: "owner"
+        consignee: "consignee"
+        holder: "holder"
+        creationDate: 6
+        issuer: "issuer"
+        notify: "notify"
+        montantBC: 0
+        badDetails:
+          dateCreation: "2023-10-13 15:39:06"
+          notifyBad: "notifyBad"
+          tar: 2000
+          dateReceptionEai: "dateReceptionEai"
+          poids: 2000
+          voyage: "{}"
+          referenceDeclarationSommaire: "ref_230000107"
+          referenceBAD: "411230000000077"
+          submitted: true
+          idNotify: "195450"
+          lieuStockage: "411001"
+          connaissement: "{}"
+          port: "MAPTM"
+          freightForwarder: true
+          dateReceptionDouane: "dateReceptionDouane"
+        isPaid: true
+        badId: "badId"
+        paiementConditional: true
+        dateExpiration: 1
+        numCpu: 5
+        status: "SUBMIT"
+  Sumdata:
+    type: "object"
+    properties:
+      a:
+        type: "number"
+      b:
+        type: "number"
+    example:
+      a: 11
+      b: 125
+  Cpu:
+    type: "object"
+    properties:
+      badId:
+        type: "string"
+      cpuLabel:
+        type: "string"
+      nounce:
+        type: "integer"
+      owner:
+        type: "string"
+      tokenValue:
+        type: "string"
+      minter:
+        type: "string"
+      tractionExt:
+        type: "string"
+      driver:
+        type: "string"
+      amp:
+        type: "string"
+      tractor:
+        type: "string"
+      truck:
+        type: "string"
+      plateau:
+        type: "string"
+    example:
+      owner: "owner"
+      badId: "badId"
+      nounce: 0
+      minter: "minter"
+      driver: "driver"
+      amp: "amp"
+      tractor: "tractor"
+      truck: "truck"
+      plateau: "plateau"
+      tractionExt: "tractionExt"
+      cpuLabel: "cpuLabel"
+      tokenValue: "tokenValue"
+  CpuWithSignature:
+    type: "object"
+    properties:
+      bad:
+        $ref: "#/definitions/Cpu"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      bad:
+        owner: "owner"
+        badId: "badId"
+        nounce: 0
+        minter: "minter"
+        driver: "driver"
+        amp: "amp"
+        tractor: "tractor"
+        truck: "truck"
+        plateau: "plateau"
+        tractionExt: "tractionExt"
+        cpuLabel: "cpuLabel"
+        tokenValue: "tokenValue"
+  PaymentOperationRequestWithSignature:
+    type: "object"
+    properties:
+      payment:
+        $ref: "#/definitions/PaymentOperationRequest"
+      signaturePayload:
+        $ref: "#/definitions/signaturePayload"
+    example:
+      signaturePayload: "C65xH0wn/uJOUyXnTOTdyafwL7JF4VbIjPyBLL77LjBqY7ltGeUTFcyvW6tolv8VGe+xhDDofRt2BAsiVylX8CNEih3GebDQ8thY8zEsiFVXCmYrll+AK7/MxfoTJ4QyKY/amGNKhPSdD4rYMZU4gKxFRKwsGAMoJeW+kP1ZSb0MLtbi11KTbyC1wYTfsnIa3+5PlfEbocMQQOLVwPSIcW2F66+1zyiHC4qQmM4Tr+jqblkXlTMWk1ptjqpByP6K3ASbCEQ3DHlGLFE1WTf8PpVdHJ3IWdus2hPoPKLpCXt9fNveCURy2iEPAcNA6bjwy8ptlcLpNM5nUgoTEsbrLg=="
+      payment:
+        badId: "badId"
+        amount: 6.02745618307040320615897144307382404804229736328125
+        recipientAccountNumber: "recipientAccountNumber"
+        noncePay: 0
+        currency: "currency"
+        senderAccountNumber: "senderAccountNumber"
+  PaymentOperationRequest:
+    type: "object"
+    properties:
+      badId:
+        type: "string"
+      senderAccountNumber:
+        type: "string"
+      recipientAccountNumber:
+        type: "string"
+      noncePay:
+        type: "integer"
+        description: "value used to generate unique ID for payment. It starts with\
+          \ 0"
+      amount:
+        type: "number"
+        description: "Integer expressing number in centimes"
+      currency:
+        type: "string"
+    example:
+      badId: "badId"
+      amount: 6.02745618307040320615897144307382404804229736328125
+      recipientAccountNumber: "recipientAccountNumber"
+      noncePay: 0
+      currency: "currency"
+      senderAccountNumber: "senderAccountNumber"
+  statusPaymentOperationRequest:
+    type: "object"
+    properties:
+      paymentNumber:
+        type: "string"
+  statusPaymentOperationRequestByBadId:
+    type: "object"
+    properties:
+      badId:
+        type: "string"
+      noncePay:
+        type: "integer"
+        description: "value used to generate unique ID for payment. It starts with\
+          \ 0"
+  PaymentOperation:
+    type: "object"
+    properties:
+      paymentNumber:
+        type: "string"
+      senderAccountNumber:
+        type: "string"
+      recipientAccountNumber:
+        type: "string"
+      badId:
+        type: "string"
+      noncePay:
+        type: "integer"
+      amount:
+        type: "number"
+        description: "Integer expressing number in centimes"
+      currency:
+        type: "string"
+      metadata:
+        type: "string"
+      status:
+        type: "string"
+    example:
+      badId: "badId"
+      amount: 6.02745618307040320615897144307382404804229736328125
+      metadata: "metadata"
+      recipientAccountNumber: "recipientAccountNumber"
+      noncePay: 0
+      currency: "currency"
+      paymentNumber: "paymentNumber"
+      senderAccountNumber: "senderAccountNumber"
+      status: "status"
+  BadResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      error:
+        type: "boolean"
+  CpuResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      error:
+        type: "boolean"
+    example:
+      message: "message"
+      error: true
+  ampCreatePayload:
+    type: "object"
+    required:
+    - "declarantId"
+    properties:
+      noAmp:
+        type: "string"
+        example: "01E210621447"
+      declarantId:
+        type: "string"
+        example: "PM0609"
+      tractionExtNum:
+        type: "string"
+        example: "TRX15558556"
+      version:
+        type: "string"
+        example: "1"
+      noService:
+        type: "string"
+        example: "210621447"
+      badId:
+        type: "string"
+        example: "01E210621447"
+      statusBad:
+        type: "string"
+        example: "Forcé"
+        enum:
+        - "Non soumis"
+        - "Soumis"
+        - "Forcé"
+        - "Rejeté"
+        - "Transféré"
+        - "Dissocié"
+        - "Validé"
+        - ""
+      refEtatChargement:
+        type: "string"
+        example: "etat"
+      transporterId:
+        type: "string"
+        example: "PM0582"
+      tractorId:
+        type: "string"
+        example: "TRB537"
+      unitId:
+        type: "string"
+        example: "YDGJB537"
+      driver:
+        type: "string"
+        example: "driver"
+      tag:
+        type: "string"
+        example: "tag"
+      dateCreationAmpFret:
+        type: "string"
+        example: "01/02/2022"
+    xml:
+      name: "ampCreatePayload"
+    description: "The inputs for creating a new amp"
+  ampUpdatePayload:
+    type: "object"
+    required:
+    - "ampStatus"
+    - "declarantId"
+    - "isTractorMandatory"
+    - "noService"
+    - "unitId"
+    - "version"
+    properties:
+      noAmp:
+        type: "string"
+        example: "01E210621447"
+      declarantId:
+        type: "string"
+        example: "PM0609"
+      tractionExtNum:
+        type: "string"
+        example: "TRX15558556"
+      version:
+        type: "string"
+        example: "1"
+      noService:
+        type: "string"
+        example: "210621447"
+      badId:
+        type: "string"
+        example: "01E210621447"
+      statusBad:
+        type: "string"
+        example: "Forcé"
+        enum:
+        - "Non soumis"
+        - "Soumis"
+        - "Forcé"
+        - "Rejeté"
+        - "Transféré"
+        - "Dissocié"
+        - "Validé"
+        - ""
+      refEtatChargement:
+        type: "string"
+        example: "etat"
+      transporterId:
+        type: "string"
+        example: "PM0582"
+      tractorId:
+        type: "string"
+        example: "TRB537"
+      isTractorMandatory:
+        type: "boolean"
+        example: true
+        description: "Is the tractor mandatory, used only for the update of an amp"
+      unitId:
+        type: "string"
+        example: "YDGJB537"
+      driver:
+        type: "string"
+        example: "driver"
+      tag:
+        type: "string"
+        example: "tag"
+      dateCreationAmpFret:
+        type: "string"
+        example: "01/02/2022"
+      ampStatus:
+        type: "string"
+        example: "Validée"
+    xml:
+      name: "ampUpdatePayload"
+    description: "The inputs for updating updating an existing amp"
+  tractionExt:
+    type: "object"
+    required:
+    - "declarantId"
+    - "transporterId"
+    properties:
+      noAm:
+        type: "string"
+        example: "I210621447"
+      cpuId:
+        type: "string"
+        example: "bad3-Nonce1"
+      tractionExtNum:
+        type: "string"
+        example: "TRX15558556"
+      declarantId:
+        type: "string"
+        example: "SAN JOSE-LOPEZ"
+      transporterId:
+        type: "string"
+        example: "TRANS5FK"
+      tractorId:
+        type: "string"
+        example: "12345A40"
+      unitId:
+        type: "string"
+        example: "YDGJB537"
+      cpu:
+        $ref: "#/definitions/Cpu"
+      source:
+        type: "string"
+        example: "Gate 1"
+      destination:
+        type: "string"
+        example: "Gate 2"
+      status:
+        type: "string"
+        description: "The status of certified pickup operation"
+        default: "PENDING"
+        enum:
+        - "PENDING"
+        - "ACCEPTED"
+        - "CANCELLED"
+        - "VALIDATED"
+        - "REJECTED"
+        - "DRAFT"
+      creationTimestamp:
+        type: "integer"
+        format: "int32"
+        description: "The timestamp of the creation of the certified pickup"
+        minimum: 0
+      rejectionReason:
+        type: "string"
+        description: "The rejection reason(by TMPA) of the certified pickup operation"
+        default: "None"
+    example:
+      cpuId: "bad3-Nonce1"
+      tractionExtNum: "TRX15558556"
+      destination: "Gate 2"
+      cpu:
+        owner: "owner"
+        badId: "badId"
+        nounce: 0
+        minter: "minter"
+        driver: "driver"
+        amp: "amp"
+        tractor: "tractor"
+        truck: "truck"
+        plateau: "plateau"
+        tractionExt: "tractionExt"
+        cpuLabel: "cpuLabel"
+        tokenValue: "tokenValue"
+      source: "Gate 1"
+      transporterId: "TRANS5FK"
+      declarantId: "SAN JOSE-LOPEZ"
+      creationTimestamp: 0
+      tractorId: "12345A40"
+      unitId: "YDGJB537"
+      rejectionReason: "None"
+      noAm: "I210621447"
+      status: "PENDING"
+  creationTractionExt:
+    type: "object"
+    required:
+    - "declarantId"
+    - "transporterId"
+    properties:
+      noAm:
+        type: "string"
+        example: "I210621447"
+      cpuId:
+        type: "string"
+        example: "badN2-Nonce1"
+      tractionExtNum:
+        type: "string"
+        example: "TRX15558556"
+      declarantId:
+        type: "string"
+        example: "SAN JOSE-LOPEZ"
+      transporterId:
+        type: "string"
+        example: "TRANS5FK"
+      tractorId:
+        type: "string"
+        example: "12345A40"
+      unitId:
+        type: "string"
+        example: "YDGJB537"
+      source:
+        type: "string"
+        example: "Gate 1"
+      destination:
+        type: "string"
+        example: "Gate 2"
+      status:
+        type: "string"
+        description: "The status of certified pickup operation"
+        default: "PENDING"
+        enum:
+        - "PENDING"
+        - "ACCEPTED"
+        - "CANCELLED"
+        - "VALIDATED"
+        - "REJECTED"
+        - "DRAFT"
+      creationTimestamp:
+        type: "integer"
+        format: "int32"
+        description: "The timestamp of the creation of the certified pickup"
+        minimum: 0
+      rejectionReason:
+        type: "string"
+        description: "The rejection reason(by TMPA) of the certified pickup operation"
+        default: "None"
+  AmpStatus:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        example: "Cloturée"
+        enum:
+        - "Cloturée"
+        - "Annulée"
+        - "Validée"
+        - ""
+    xml:
+      name: "AmpStatus"
+    description: "The status of an ongoing Amp"
+  Message:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+        minimum: 0
+      message:
+        type: "string"
+      error:
+        type: "boolean"
+    example:
+      code: 0
+      error: true
+      message: "Response Message"
+  BadDetails:
+    type: "object"
+    properties:
+      referenceBAD:
+        type: "string"
+        example: "411230000000077"
+      notifyBad:
+        type: "string"
+      freightForwarder:
+        type: "boolean"
+        example: true
+      dateCreation:
+        type: "string"
+        example: "2023-10-13 15:39:06"
+      port:
+        type: "string"
+        example: "MAPTM"
+      submitted:
+        type: "boolean"
+        example: true
+      lieuStockage:
+        type: "string"
+        example: "411001"
+      poids:
+        type: "integer"
+        example: 2000
+      tar:
+        type: "integer"
+        example: 2000
+      referenceDeclarationSommaire:
+        type: "string"
+        example: "ref_230000107"
+      voyage:
+        type: "object"
+        properties: {}
+      connaissement:
+        type: "object"
+        properties: {}
+      dateReceptionEai:
+        type: "string"
+      dateReceptionDouane:
+        type: "string"
+      idNotify:
+        type: "string"
+        example: "195450"
+    example:
+      dateCreation: "2023-10-13 15:39:06"
+      notifyBad: "notifyBad"
+      tar: 2000
+      dateReceptionEai: "dateReceptionEai"
+      poids: 2000
+      voyage: "{}"
+      referenceDeclarationSommaire: "ref_230000107"
+      referenceBAD: "411230000000077"
+      submitted: true
+      idNotify: "195450"
+      lieuStockage: "411001"
+      connaissement: "{}"
+      port: "MAPTM"
+      freightForwarder: true
+      dateReceptionDouane: "dateReceptionDouane"
+  Operator:
+    type: "object"
+    properties:
+      iceAndOperateurId:
+        type: "string"
+        example: "000085205000014(38141)"
+      raisonSocialeOperateur:
+        type: "string"
+        example: "FORDE REEDEREI SEETOURISTIK MA"
+      idOperateur:
+        type: "integer"
+        example: 38141
+  Voyage:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 28094
+      numeroVoyage:
+        type: "string"
+        example: "TEX220222VG3"
+      numeroEscale:
+        type: "string"
+        example: "159243"
+      nomNavire:
+        type: "string"
+        example: "TANGER EXPRESS"
+      dateVoyage:
+        type: "string"
+        example: "2022-02-22 22:00:00"
+      etd:
+        type: "string"
+        example: "2022-02-22 23:59:00"
+      td:
+        type: "string"
+      quaiArrivee:
+        type: "string"
+        example: "P2"
+      nombreMouvements:
+        type: "string"
+        example: "2"
+      statutEscale:
+        type: "string"
+        example: "Réservation"
+      imoNumber:
+        type: "string"
+        example: "9112777"
+      terminal:
+        type: "string"
+        example: "RORO"
+      armateurProprietaire:
+        type: "string"
+        example: "FRS MAROC"
+  Connaissement:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 41478
+      numeroConnaissement:
+        type: "integer"
+        example: 2
+      reference:
+        type: "string"
+        example: "B"
+      lieuChargement:
+        type: "string"
+        example: "ESALG"
+      dateChargement:
+        type: "string"
+        example: "2022-02-22 00:00:00"
+      lieuDeChargement:
+        type: "string"
+      dateDeChargement:
+        type: "string"
+      iceAndOperateurId:
+        type: "string"
+        example: "000066094000068(10478)"
+      operateurId:
+        type: "integer"
+        example: 10478
+      raisonSocial:
+        type: "string"
+        example: "YAZAKI MOROCCO"
+      validated:
+        type: "boolean"
+        example: true
+      sendToDouane:
+        type: "boolean"
+        example: false
+      locked:
+        type: "boolean"
+        example: false
+      regimeDouanier:
+        type: "string"
+      lignesMarchandise:
+        type: "array"
+        items:
+          $ref: "#/definitions/Marchandise"
+      connaissementMeadId:
+        type: "string"
+  Marchandise:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 55710
+      numeroLigne:
+        type: "integer"
+        example: 1
+      typeContenant:
+        type: "string"
+        example: "006"
+      nombreContenant:
+        type: "integer"
+        example: 1
+      marque:
+        type: "string"
+        example: "MARQUE2"
+      poids:
+        type: "integer"
+        example: 2000
+      natureMarchandise:
+        type: "string"
+        example: "NAURE MARCHANDISE 2"
+      equipements:
+        type: "array"
+        items:
+          $ref: "#/definitions/Equipement"
+      ngps:
+        type: "array"
+        items:
+          $ref: "#/definitions/NGP"
+  Equipement:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 42943
+      numeroEquipement:
+        type: "string"
+        example: "U002"
+      tare:
+        type: "integer"
+        example: 2000
+      longeur:
+        type: "integer"
+        example: 20
+  NGP:
+    type: "object"
+    properties:
+      ngp:
+        type: "string"
+        example: "2222"
+  inline_response_200:
+    type: "object"
+    properties:
+      bookmark:
+        type: "string"
+        example: "|bad|badId186|"
+      result:
+        type: "array"
+        items:
+          $ref: "#/definitions/bad"
+    example:
+      result:
+      - owner: "owner"
+        consignee: "consignee"
+        holder: "holder"
+        creationDate: 6
+        issuer: "issuer"
+        notify: "notify"
+        montantBC: 0
+        badDetails:
+          dateCreation: "2023-10-13 15:39:06"
+          notifyBad: "notifyBad"
+          tar: 2000
+          dateReceptionEai: "dateReceptionEai"
+          poids: 2000
+          voyage: "{}"
+          referenceDeclarationSommaire: "ref_230000107"
+          referenceBAD: "411230000000077"
+          submitted: true
+          idNotify: "195450"
+          lieuStockage: "411001"
+          connaissement: "{}"
+          port: "MAPTM"
+          freightForwarder: true
+          dateReceptionDouane: "dateReceptionDouane"
+        isPaid: true
+        badId: "badId"
+        paiementConditional: true
+        dateExpiration: 1
+        numCpu: 5
+        status: "SUBMIT"
+      - owner: "owner"
+        consignee: "consignee"
+        holder: "holder"
+        creationDate: 6
+        issuer: "issuer"
+        notify: "notify"
+        montantBC: 0
+        badDetails:
+          dateCreation: "2023-10-13 15:39:06"
+          notifyBad: "notifyBad"
+          tar: 2000
+          dateReceptionEai: "dateReceptionEai"
+          poids: 2000
+          voyage: "{}"
+          referenceDeclarationSommaire: "ref_230000107"
+          referenceBAD: "411230000000077"
+          submitted: true
+          idNotify: "195450"
+          lieuStockage: "411001"
+          connaissement: "{}"
+          port: "MAPTM"
+          freightForwarder: true
+          dateReceptionDouane: "dateReceptionDouane"
+        isPaid: true
+        badId: "badId"
+        paiementConditional: true
+        dateExpiration: 1
+        numCpu: 5
+        status: "SUBMIT"
+      bookmark: "|bad|badId186|"
+  body:
+    type: "object"
+    properties:
+      badId:
+        type: "string"
+        description: "ID of the bad"
+      nonce:
+        type: "integer"
+        description: "ID of the CPU"
